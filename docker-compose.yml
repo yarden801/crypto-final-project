@@ -1,0 +1,69 @@
+version: "3.9"
+
+x-common-build: &common-build
+  context: .
+
+services:
+  ca1:
+    build: *common-build
+    container_name: ca1
+    environment:
+      ROLE: ca
+      NODE_ID: 1
+      N_NODES: 3
+      THRESHOLD: 2
+      GRPC_PORT: 50061
+    command: ["python","-m","sharedca.server"]
+    networks: [ca_net]
+
+  ca2:
+    build: *common-build
+    container_name: ca2
+    environment:
+      ROLE: ca
+      NODE_ID: 2
+      N_NODES: 3
+      THRESHOLD: 2
+      GRPC_PORT: 50062
+    command: ["python","-m","sharedca.server"]
+    networks: [ca_net]
+
+  ca3:
+    build: *common-build
+    container_name: ca3
+    environment:
+      ROLE: ca
+      NODE_ID: 3
+      N_NODES: 3
+      THRESHOLD: 2
+      GRPC_PORT: 50063
+    command: ["python","-m","sharedca.server"]
+    networks: [ca_net]
+
+  client1:
+    build: *common-build
+    container_name: client1
+    environment:
+      ROLE: client
+      NODE_ADDRESSES: ca1:50061,ca2:50062,ca3:50063
+      THRESHOLD: 2
+      CN: client1
+    command: ["python","-m","client.client"]
+    networks: [ca_net]
+    depends_on: [ca1, ca2, ca3]
+
+  client2:
+    build: *common-build
+    container_name: client2
+    environment:
+      ROLE: client
+      NODE_ADDRESSES: ca1:50061,ca2:50062,ca3:50063
+      THRESHOLD: 2
+      CN: client2
+    command: ["python","-m","client.client"]
+    networks: [ca_net]
+    depends_on: [ca1, ca2, ca3]
+
+networks:
+  ca_net:
+    driver: bridge
