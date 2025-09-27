@@ -1,7 +1,11 @@
 BLS + shamir secret sharing 
+
 gRPC
+
 3 CA 
+
 2 clients 
+
 threashold-2 
 
 TODO:
