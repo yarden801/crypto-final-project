@@ -1,12 +1,6 @@
-BLS + shamir secret sharing 
-
-gRPC
-
-3 CA 
-
-2 clients 
-
-threashold-2 
+1. BLS + shamir secret sharing
+2. gRPC
+3. 3 CA, 2 clients, threashold-2 
 
 TODO:
 1. fix docker problems
