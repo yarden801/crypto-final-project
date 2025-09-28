@@ -11,10 +11,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # now copy code (smaller thanks to .dockerignore)
 COPY proto ./proto
 COPY common ./common
-COPY sharedca ./sharedca    # or ca_node if you didn’t rename
+COPY sharedca ./sharedca  
 COPY client ./client
 
 # compile protos
 RUN python -m grpc_tools.protoc -I./proto --python_out=. --grpc_python_out=. ./proto/ca.proto
 
-CMD ["python","-m","client.client"]
+CMD ["tail","-f","/dev/null"]
