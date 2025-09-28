@@ -1,4 +1,4 @@
-version: "3.9"
+
 
 x-common-build: &common-build
   context: .
@@ -13,7 +13,7 @@ services:
       N_NODES: 3
       THRESHOLD: 2
       GRPC_PORT: 50061
-    command: ["python","-m","sharedca.server"]
+    command: ["python","-m","sharedca/server"]
     networks: [ca_net]
 
   ca2:
@@ -25,7 +25,7 @@ services:
       N_NODES: 3
       THRESHOLD: 2
       GRPC_PORT: 50062
-    command: ["python","-m","sharedca.server"]
+    command: ["python","-m","sharedca/server"]
     networks: [ca_net]
 
   ca3:
@@ -37,7 +37,7 @@ services:
       N_NODES: 3
       THRESHOLD: 2
       GRPC_PORT: 50063
-    command: ["python","-m","sharedca.server"]
+    command: ["python","-m","sharedca/server"]
     networks: [ca_net]
 
   client1:
@@ -48,7 +48,7 @@ services:
       NODE_ADDRESSES: ca1:50061,ca2:50062,ca3:50063
       THRESHOLD: 2
       CN: client1
-    command: ["python","-m","client.client"]
+    command: ["python","-m","client/client"]
     networks: [ca_net]
     depends_on: [ca1, ca2, ca3]
 
@@ -60,7 +60,7 @@ services:
       NODE_ADDRESSES: ca1:50061,ca2:50062,ca3:50063
       THRESHOLD: 2
       CN: client2
-    command: ["python","-m","client.client"]
+    command: ["python","-m","client/client"]
     networks: [ca_net]
     depends_on: [ca1, ca2, ca3]
 
