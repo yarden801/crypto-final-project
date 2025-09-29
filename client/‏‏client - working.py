@@ -10,27 +10,22 @@ from common.cert import Certificate
 import proto.ca_pb2 as pb
 import proto.ca_pb2_grpc as pbg
 
-from common.util import bytes_to_g1
-
 from py_ecc.optimized_bls12_381 import (
     curve_order as R,
     G1, G2, multiply, add, pairing,
     FQ, FQ2
 )
 
-MASTER_PK_HEX = os.getenv("MASTER_PK")
-if MASTER_PK_HEX is None:
-    with open("./master_pk.hex") as f:
-        MASTER_PK_HEX = f.read().strip()
-
-if MASTER_PK_HEX is None:
-    raise RuntimeError("Missing MASTER_PK env var (hex-encoded G1 point)")
-    
-MASTER_PK = bytes_to_g1(bytes.fromhex(MASTER_PK_HEX))
+# ---------- Demo params ----------
+SEED_MASTER = b"thresh-demo-master"
+SEED_A1     = b"thresh-demo-a1"
 
 def H_to_scalar(seed: bytes) -> int:
     return int.from_bytes(hashlib.sha256(seed).digest(), "big") % R
 
+MASTER_SK = H_to_scalar(SEED_MASTER)
+A1        = H_to_scalar(SEED_A1)
+MASTER_PK = multiply(G1, MASTER_SK)
 
 # ---------- Hash-to-curve ----------
 def hash_to_G2_point(msg: bytes):
@@ -103,7 +98,6 @@ def request_partials(tbs: bytes) -> List[Tuple[int, bytes]]:
 
 def aggregate_threshold(partials: List[Tuple[int, bytes]]):
     idx = [i for (i, _) in partials]
-    print("Indices used for interpolation:", idx)   # <--- here
     lambdas = lagrange_coeff(idx)
     g2_pts = [bytes_to_g2_jac(sig_b) for (_, sig_b) in partials]
     agg = None
@@ -111,7 +105,6 @@ def aggregate_threshold(partials: List[Tuple[int, bytes]]):
         scaled = multiply(P, lam)
         agg = scaled if agg is None else add(agg, scaled)
     return agg
-
 
 def verify_cert_sig(cert: Certificate, agg_sig_point) -> bool:
     msg_point = hash_to_G2_point(cert.to_tbs())
@@ -144,17 +137,6 @@ def main():
     pem = cert.to_pem()
     print("=== Threshold Cert (client-aggregated) ===")
     print(pem.decode())
-    
-    
-    print("=== Certificate Details ===")
-    print("Serial:", cert.serial)
-    print("Subject CN:", cert.subject_cn)
-    print("Issuer CN:", cert.issuer_cn)
-    print("Validity:", cert.not_before, "to", cert.not_after)
-    print("Subject public key (PEM):")
-    print(cert.subject_pub_pem.decode())
-    print("Signature (hex):", cert.signature.hex() if cert.signature else None)
-
 
     ok = verify_cert_sig(cert, agg_sig_point)
     print("verify:", ok)

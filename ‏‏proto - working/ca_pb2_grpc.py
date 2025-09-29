@@ -26,7 +26,8 @@ if _version_not_supported:
 
 
 class CANodeStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """---- Service (no aggregator) ----
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -34,25 +35,10 @@ class CANodeStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.IssueCertificate = channel.unary_unary(
-                '/threshca.CANode/IssueCertificate',
-                request_serializer=ca__pb2.CSRRequest.SerializeToString,
-                response_deserializer=ca__pb2.CertResponse.FromString,
-                _registered_method=True)
         self.SignPartial = channel.unary_unary(
                 '/threshca.CANode/SignPartial',
                 request_serializer=ca__pb2.NodeSignReq.SerializeToString,
                 response_deserializer=ca__pb2.NodeSignResp.FromString,
-                _registered_method=True)
-        self.SignRevokePartial = channel.unary_unary(
-                '/threshca.CANode/SignRevokePartial',
-                request_serializer=ca__pb2.RevokeRequest.SerializeToString,
-                response_deserializer=ca__pb2.NodeSignResp.FromString,
-                _registered_method=True)
-        self.ApplyRevocation = channel.unary_unary(
-                '/threshca.CANode/ApplyRevocation',
-                request_serializer=ca__pb2.RevocationProof.SerializeToString,
-                response_deserializer=ca__pb2.RevokeResponse.FromString,
                 _registered_method=True)
         self.Revoke = channel.unary_unary(
                 '/threshca.CANode/Revoke',
@@ -72,29 +58,11 @@ class CANodeStub(object):
 
 
 class CANodeServicer(object):
-    """Missing associated documentation comment in .proto file."""
-
-    def IssueCertificate(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+    """---- Service (no aggregator) ----
+    """
 
     def SignPartial(self, request, context):
         """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def SignRevokePartial(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def ApplyRevocation(self, request, context):
-        """<-- must match client
-        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -120,25 +88,10 @@ class CANodeServicer(object):
 
 def add_CANodeServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'IssueCertificate': grpc.unary_unary_rpc_method_handler(
-                    servicer.IssueCertificate,
-                    request_deserializer=ca__pb2.CSRRequest.FromString,
-                    response_serializer=ca__pb2.CertResponse.SerializeToString,
-            ),
             'SignPartial': grpc.unary_unary_rpc_method_handler(
                     servicer.SignPartial,
                     request_deserializer=ca__pb2.NodeSignReq.FromString,
                     response_serializer=ca__pb2.NodeSignResp.SerializeToString,
-            ),
-            'SignRevokePartial': grpc.unary_unary_rpc_method_handler(
-                    servicer.SignRevokePartial,
-                    request_deserializer=ca__pb2.RevokeRequest.FromString,
-                    response_serializer=ca__pb2.NodeSignResp.SerializeToString,
-            ),
-            'ApplyRevocation': grpc.unary_unary_rpc_method_handler(
-                    servicer.ApplyRevocation,
-                    request_deserializer=ca__pb2.RevocationProof.FromString,
-                    response_serializer=ca__pb2.RevokeResponse.SerializeToString,
             ),
             'Revoke': grpc.unary_unary_rpc_method_handler(
                     servicer.Revoke,
@@ -164,34 +117,8 @@ def add_CANodeServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class CANode(object):
-    """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def IssueCertificate(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/threshca.CANode/IssueCertificate',
-            ca__pb2.CSRRequest.SerializeToString,
-            ca__pb2.CertResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
+    """---- Service (no aggregator) ----
+    """
 
     @staticmethod
     def SignPartial(request,
@@ -210,60 +137,6 @@ class CANode(object):
             '/threshca.CANode/SignPartial',
             ca__pb2.NodeSignReq.SerializeToString,
             ca__pb2.NodeSignResp.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def SignRevokePartial(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/threshca.CANode/SignRevokePartial',
-            ca__pb2.RevokeRequest.SerializeToString,
-            ca__pb2.NodeSignResp.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def ApplyRevocation(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/threshca.CANode/ApplyRevocation',
-            ca__pb2.RevocationProof.SerializeToString,
-            ca__pb2.RevokeResponse.FromString,
             options,
             channel_credentials,
             insecure,

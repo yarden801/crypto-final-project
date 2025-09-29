@@ -21,12 +21,41 @@ message NodeSignResp {
 }
 
 message RevokeRequest { string serial = 1; }
-message RevokeResponse { bool ok = 1; string msg = 2; }
 
-// ---- Service (no aggregator) ----
+message ApplyRevocationResponse {
+  bool ok = 1;
+  string msg = 2;
+}
+
+message RevocationProof {
+  string serial = 1;
+  bytes threshold_sig = 2;
+}
+
+message RevokeResponse {
+  bool ok = 1;
+  string msg = 2;
+}
+
+message CSRRequest {
+  string subject_cn = 1;
+  bytes public_key = 2;
+  int32 validity_days = 3;
+}
+
+message CertResponse {
+  bool ok = 1;
+  string msg = 2;
+  bytes certificate = 3; // PEM-encoded
+}
+
+
 service CANode {
-  rpc SignPartial (NodeSignReq) returns (NodeSignResp);
-  rpc Revoke (RevokeRequest) returns (RevokeResponse);
-  rpc CRL (CRLRequest) returns (CRLResponse);
-  rpc OCSP (OCSPRequest) returns (OCSPResponse);
+  rpc IssueCertificate(CSRRequest) returns (CertResponse);
+  rpc SignPartial(NodeSignReq) returns (NodeSignResp);
+  rpc SignRevokePartial(RevokeRequest) returns (NodeSignResp);
+  rpc ApplyRevocation(RevocationProof) returns (RevokeResponse); // <-- must match client
+  rpc Revoke(RevokeRequest) returns (RevokeResponse);
+  rpc CRL(CRLRequest) returns (CRLResponse);
+  rpc OCSP(OCSPRequest) returns (OCSPResponse);
 }

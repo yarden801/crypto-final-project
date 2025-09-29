@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x08\x63\x61.proto\x12\x08threshca\"\x0c\n\nCRLRequest\"=\n\x0b\x43RLResponse\x12\x17\n\x0frevoked_serials\x18\x01 \x03(\t\x12\x15\n\rthreshold_sig\x18\x02 \x01(\x0c\"\x1d\n\x0bOCSPRequest\x12\x0e\n\x06serial\x18\x01 \x01(\t\"\x82\x01\n\x0cOCSPResponse\x12-\n\x06status\x18\x01 \x01(\x0e\x32\x1d.threshca.OCSPResponse.Status\x12\x15\n\rthreshold_sig\x18\x02 \x01(\x0c\",\n\x06Status\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04GOOD\x10\x01\x12\x0b\n\x07REVOKED\x10\x02\"/\n\x0bNodeSignReq\x12\x10\n\x08tbs_cert\x18\x01 \x01(\x0c\x12\x0e\n\x06req_id\x18\x02 \x01(\t\"P\n\x0cNodeSignResp\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0b\n\x03msg\x18\x02 \x01(\t\x12\x13\n\x0bpartial_sig\x18\x03 \x01(\x0c\x12\x12\n\nnode_index\x18\x04 \x01(\r\"\x1f\n\rRevokeRequest\x12\x0e\n\x06serial\x18\x01 \x01(\t\")\n\x0eRevokeResponse\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0b\n\x03msg\x18\x02 \x01(\t2\xee\x01\n\x06\x43\x41Node\x12<\n\x0bSignPartial\x12\x15.threshca.NodeSignReq\x1a\x16.threshca.NodeSignResp\x12;\n\x06Revoke\x12\x17.threshca.RevokeRequest\x1a\x18.threshca.RevokeResponse\x12\x32\n\x03\x43RL\x12\x14.threshca.CRLRequest\x1a\x15.threshca.CRLResponse\x12\x35\n\x04OCSP\x12\x15.threshca.OCSPRequest\x1a\x16.threshca.OCSPResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x08\x63\x61.proto\x12\x08threshca\"\x0c\n\nCRLRequest\"=\n\x0b\x43RLResponse\x12\x17\n\x0frevoked_serials\x18\x01 \x03(\t\x12\x15\n\rthreshold_sig\x18\x02 \x01(\x0c\"\x1d\n\x0bOCSPRequest\x12\x0e\n\x06serial\x18\x01 \x01(\t\"\x82\x01\n\x0cOCSPResponse\x12-\n\x06status\x18\x01 \x01(\x0e\x32\x1d.threshca.OCSPResponse.Status\x12\x15\n\rthreshold_sig\x18\x02 \x01(\x0c\",\n\x06Status\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x08\n\x04GOOD\x10\x01\x12\x0b\n\x07REVOKED\x10\x02\"/\n\x0bNodeSignReq\x12\x10\n\x08tbs_cert\x18\x01 \x01(\x0c\x12\x0e\n\x06req_id\x18\x02 \x01(\t\"P\n\x0cNodeSignResp\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0b\n\x03msg\x18\x02 \x01(\t\x12\x13\n\x0bpartial_sig\x18\x03 \x01(\x0c\x12\x12\n\nnode_index\x18\x04 \x01(\r\"\x1f\n\rRevokeRequest\x12\x0e\n\x06serial\x18\x01 \x01(\t\"2\n\x17\x41pplyRevocationResponse\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0b\n\x03msg\x18\x02 \x01(\t\"8\n\x0fRevocationProof\x12\x0e\n\x06serial\x18\x01 \x01(\t\x12\x15\n\rthreshold_sig\x18\x02 \x01(\x0c\")\n\x0eRevokeResponse\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0b\n\x03msg\x18\x02 \x01(\t\"K\n\nCSRRequest\x12\x12\n\nsubject_cn\x18\x01 \x01(\t\x12\x12\n\npublic_key\x18\x02 \x01(\x0c\x12\x15\n\rvalidity_days\x18\x03 \x01(\x05\"<\n\x0c\x43\x65rtResponse\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0b\n\x03msg\x18\x02 \x01(\t\x12\x13\n\x0b\x63\x65rtificate\x18\x03 \x01(\x0c\x32\xbe\x03\n\x06\x43\x41Node\x12@\n\x10IssueCertificate\x12\x14.threshca.CSRRequest\x1a\x16.threshca.CertResponse\x12<\n\x0bSignPartial\x12\x15.threshca.NodeSignReq\x1a\x16.threshca.NodeSignResp\x12\x44\n\x11SignRevokePartial\x12\x17.threshca.RevokeRequest\x1a\x16.threshca.NodeSignResp\x12\x46\n\x0f\x41pplyRevocation\x12\x19.threshca.RevocationProof\x1a\x18.threshca.RevokeResponse\x12;\n\x06Revoke\x12\x17.threshca.RevokeRequest\x1a\x18.threshca.RevokeResponse\x12\x32\n\x03\x43RL\x12\x14.threshca.CRLRequest\x1a\x15.threshca.CRLResponse\x12\x35\n\x04OCSP\x12\x15.threshca.OCSPRequest\x1a\x16.threshca.OCSPResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -47,8 +47,16 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_NODESIGNRESP']._serialized_end=392
   _globals['_REVOKEREQUEST']._serialized_start=394
   _globals['_REVOKEREQUEST']._serialized_end=425
-  _globals['_REVOKERESPONSE']._serialized_start=427
-  _globals['_REVOKERESPONSE']._serialized_end=468
-  _globals['_CANODE']._serialized_start=471
-  _globals['_CANODE']._serialized_end=709
+  _globals['_APPLYREVOCATIONRESPONSE']._serialized_start=427
+  _globals['_APPLYREVOCATIONRESPONSE']._serialized_end=477
+  _globals['_REVOCATIONPROOF']._serialized_start=479
+  _globals['_REVOCATIONPROOF']._serialized_end=535
+  _globals['_REVOKERESPONSE']._serialized_start=537
+  _globals['_REVOKERESPONSE']._serialized_end=578
+  _globals['_CSRREQUEST']._serialized_start=580
+  _globals['_CSRREQUEST']._serialized_end=655
+  _globals['_CERTRESPONSE']._serialized_start=657
+  _globals['_CERTRESPONSE']._serialized_end=717
+  _globals['_CANODE']._serialized_start=720
+  _globals['_CANODE']._serialized_end=1166
 # @@protoc_insertion_point(module_scope)
