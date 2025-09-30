@@ -105,7 +105,8 @@ This will create docker-compose.yml and node config files. If you already have t
      # Validate root (self-signed)
      docker exec client python -m client.is_valid certs/level1_Level1CA.pem \
          --trust-anchor level1_master_pk.hex
-   3. **Revoke**
+      ```
+   4. **Revoke**
      ```bash
      docker exec client python -m client.revoke --revoke certs/Level1CA.pem     
 
@@ -121,7 +122,6 @@ This can also be done automatically in `generate_compose.py` and in `setup.py`.
 You cannot manually (or with generate_compose) increase number of nodes without using `setup.py`, as this will mean that you don't create node config for them. 
 But you can manually delete nodes. If you delete too many nodes, you may never reach threshold.
 
-## Example Usage
 
 ## Example Usage
 
