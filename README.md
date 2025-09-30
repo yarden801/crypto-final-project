@@ -68,12 +68,9 @@ gRPC service definitions:
 1. **Clone the repository** (if not already done)
 2. **Setup the system**: run setup.py
  ```bash 
- python setup.py --num-levels 3 --nodes-per-level 3 --threshold 2
+ python setup.py --num-levels 2 --nodes-per-level 3 --threshold 2
  ```
-**Note:** For flat mode, set --num-levels 2.
-  - Level 1 = Root CA (distributed cluster)
-  - Level 2 = Endpoint (leaf certificate)
-    For a hierarchical deployment, use >=2
+**Note:** For flat mode, set --num-levels 1.
     
 This will create docker-compose.yml and node config files. If you already have them from previous runs, skip to 3.
 3.. **Start the distributed CA system**:
@@ -81,9 +78,39 @@ This will create docker-compose.yml and node config files. If you already have t
    docker-compose up --build
    ```
    This launches the current docker compose file with required number of levels, nodes and threshold.
+
+4. **run commands on client**:
+   You can either run the automated demo or perform the steps manually.
+   #### Option A – Run a basic demo
+   ```bash
+   docker exec client python client/demo.py
+
+   This will:
+   1. Create a certificate chain (Root → Intermediate → Endpoint)
+   2. Validate the chain
+   3. Revoke the intermediate certificate at level 2
+   4. Show that the endpoint becomes invalid after revocation
+
+  #### Option B – Run manually
+   1. **Create certificate**
+      ```bash
+      # CA
+      docker exec client python -m client.sign --level 1 --cn Level1CA --ca
    
-3. **Monitor output**: Each client will output the generated certificate upon successful threshold signing.
-4. **Stop the system**:
+      # Endpoint / leaf certificate
+      docker exec client python -m client.sign --level 2 --cn endpoint
+   
+   2. **Validate certificate**
+     ```bash
+     # Validate root (self-signed)
+     docker exec client python -m client.is_valid certs/level1_Level1CA.pem \
+         --trust-anchor level1_master_pk.hex
+   3. **Revoke**
+     ```bash
+     docker exec client python -m client.revoke --revoke certs/Level1CA.pem     
+
+      
+6. **Stop the system**:
    ```bash
    docker-compose down
    ```
@@ -96,24 +123,53 @@ But you can manually delete nodes. If you delete too many nodes, you may never r
 
 ## Example Usage
 
-When running, a successful certificate issuance will output:
+## Example Usage
 
+Running the demo produces the following sequence:
 ```
-=== Threshold Cert (client-aggregated) ===
------BEGIN CERTIFICATE-----
-...
-Subject: CN=test-client
-Issuer: CN=ThreshRoot
-...
------END CERTIFICATE-----
+=== 1. Create cert chain ===
 
-verify: True
+$ python -m client.sign --level 1 --cn Level1CA --ca
+=== Threshold Cert (aggregated) ===
+... Level1CA certificate saved to certs/level1_Level1CA.pem
+
+$ python -m client.sign --level 2 --cn Level2CA --ca
+=== Threshold Cert (aggregated) ===
+... Level2CA certificate saved to certs/level2_Level2CA.pem
+verify against issuer: True
+
+$ python -m client.sign --level 3 --cn endpoint
+=== Threshold Cert (aggregated) ===
+... endpoint certificate saved to certs/level3_endpoint.pem
+verify against issuer: True
+
+=== 2. Initial Validity Checks ===
+
+$ python -m client.is_valid certs/level1_Level1CA.pem --trust-anchor level1_master_pk.hex
+Cert is valid
+
+$ python -m client.is_valid certs/level2_Level2CA.pem --trust-anchor level1_master_pk.hex
+Cert is valid
+
+$ python -m client.is_valid certs/level3_endpoint.pem --trust-anchor level1_master_pk.hex
+Cert is valid
+
+=== 3. Revoke INTER ===
+
+$ python -m client.revoke --revoke certs/level2_Level2CA.pem
+Revocation completed, final status: REVOKED (3/3 nodes)
+
+=== 4. Validity After Revocation ===
+
+$ python -m client.is_valid certs/level1_Level1CA.pem --trust-anchor level1_master_pk.hex
+Cert is valid
+
+$ python -m client.is_valid certs/level2_Level2CA.pem --trust-anchor level1_master_pk.hex
+Cert is INVALID
+
+$ python -m client.is_valid certs/level3_endpoint.pem --trust-anchor level1_master_pk.hex
+Cert is INVALID
 ```
-
-This indicates:
-- Certificate was successfully signed with threshold BLS signature
-- Aggregation collected at least 2 partial signatures
-- Cryptographic verification passed using master public key
 
 ## Limitations and Development Notes
 You can read deeper in the Known Issues, Discussion and Future Work section in our document.
