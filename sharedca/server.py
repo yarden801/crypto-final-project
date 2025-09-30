@@ -19,7 +19,6 @@ def hash_to_G2_point(msg: bytes):
     h = int.from_bytes(hashlib.sha256(msg).digest(), "big") % R
     return multiply(G2, h)
 
-# ---------- Load config ----------
 CONFIG_PATH = os.getenv("CONFIG_PATH", "node_config/node1.json")
 with open(CONFIG_PATH) as f:
     cfg = json.load(f)
@@ -35,7 +34,6 @@ with open(f"level{LEVEL}_master_pk.hex") as f:
 
 GRPC_PORT = os.getenv("GRPC_PORT", f"5006{NODE_ID}")
 
-# ---------- Service ----------
 class CANodeServicer(pbg.CANodeServicer):
     def __init__(self):
         self.index = NODE_ID
@@ -90,7 +88,6 @@ class CANodeServicer(pbg.CANodeServicer):
         except Exception as e:
             return pb.RevokeResponse(ok=False, msg=str(e))
 
-# ---------- Server ----------
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     pbg.add_CANodeServicer_to_server(CANodeServicer(), server)
