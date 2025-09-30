@@ -101,20 +101,20 @@ This will create docker-compose.yml and node config files. If you already have t
       docker exec client python -m client.sign --level 2 --cn endpoint
    
    2. **Validate certificate**
-     ```bash
+     ```
 
      docker exec client python -m client.is_valid certs/level1_Level1CA.pem \
          --trust-anchor level1_master_pk.hex
       ```
       
    3. **Revoke**
-     ```bash
+     ```
 
      docker exec client python -m client.revoke --revoke certs/Level1CA.pem
      ```
 
    4. **Stop the system**:
-      ```bash
+      ```
       docker-compose down
       ```
 
