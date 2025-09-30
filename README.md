@@ -95,7 +95,7 @@ This will create docker-compose.yml and node config files. If you already have t
    4. Show that the endpoint becomes invalid after revocation
 
   
-  #### Option B – Run manually
+   #### Option B – Run manually
    1. **Create certificate**
       ```bash
       # CA
