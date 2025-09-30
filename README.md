@@ -70,7 +70,6 @@ gRPC service definitions:
  ```bash 
  python setup.py --num-levels 2 --nodes-per-level 3 --threshold 2
  ```
-**Note:** For flat mode, set --num-levels 1.
     
 This will create docker-compose.yml and node config files. If you already have them from previous runs, skip to 3.
 
