@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 WORKDIR /app
 
-# system deps (as before)
+# system deps 
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential protobuf-compiler && rm -rf /var/lib/apt/lists/*
 
 # copy only requirements first for caching
