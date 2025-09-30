@@ -1,0 +1,61 @@
+syntax = "proto3";
+package threshca;
+
+// ---- Requests/Responses (client <-> CA nodes) ----
+message CRLRequest {}
+message CRLResponse { repeated string revoked_serials = 1; bytes threshold_sig = 2; }
+
+message OCSPRequest { string serial = 1; }
+message OCSPResponse {
+  enum Status { UNKNOWN=0; GOOD=1; REVOKED=2; }
+  Status status = 1;
+  bytes threshold_sig = 2;
+}
+
+message NodeSignReq { bytes tbs_cert = 1; string req_id = 2; }
+message NodeSignResp {
+  bool ok = 1;
+  string msg = 2;
+  bytes partial_sig = 3;
+  uint32 node_index = 4;
+}
+
+message RevokeRequest { string serial = 1; }
+
+message ApplyRevocationResponse {
+  bool ok = 1;
+  string msg = 2;
+}
+
+message RevocationProof {
+  string serial = 1;
+  bytes threshold_sig = 2;
+}
+
+message RevokeResponse {
+  bool ok = 1;
+  string msg = 2;
+}
+
+message CSRRequest {
+  string subject_cn = 1;
+  bytes public_key = 2;
+  int32 validity_days = 3;
+}
+
+message CertResponse {
+  bool ok = 1;
+  string msg = 2;
+  bytes certificate = 3; // PEM-encoded
+}
+
+
+service CANode {
+  rpc IssueCertificate(CSRRequest) returns (CertResponse);
+  rpc SignPartial(NodeSignReq) returns (NodeSignResp);
+  rpc SignRevokePartial(RevokeRequest) returns (NodeSignResp);
+  rpc ApplyRevocation(RevocationProof) returns (RevokeResponse); // <-- must match client
+  rpc Revoke(RevokeRequest) returns (RevokeResponse);
+  rpc CRL(CRLRequest) returns (CRLResponse);
+  rpc OCSP(OCSPRequest) returns (OCSPResponse);
+}
