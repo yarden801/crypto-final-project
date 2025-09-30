@@ -181,7 +181,8 @@ Cert is INVALID
 
 ## Limitations and Development Notes
 You can read deeper in the Known Issues, Discussion and Future Work section in our document.
-In general this is a **Demo Implementation**: Uses fixed seed for reproducible key generation 
+In general this is a **Demo Implementation**: Uses fixed seed for reproducible key generation.
+Also note the following:
 - **No Persistance**: Certificates and revocation state lost on restart
 - **Basic Fault Tolerance**: No advanced recovery mechanisms for persistent node failures
 
