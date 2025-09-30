@@ -21,14 +21,12 @@ from py_ecc.optimized_bls12_381 import (
 from common.cert import Certificate
 
 
-# ---------- Enum ----------
 class RevocationStatus(Enum):
     GOOD = "GOOD"
     REVOKED = "REVOKED"
     UNKNOWN = "UNKNOWN"
 
 
-# ---------- Issuer discovery ----------
 def detect_issuer_nodes_and_pk(cert_path: str):
     """Given a PEM cert, detect which CA group issued it and load master_pk + nodes."""
     with open(cert_path, "rb") as f:
@@ -56,9 +54,10 @@ def detect_issuer_nodes_and_pk(cert_path: str):
 
     return issuer_level, node_addresses, master_pk
 
-
-# ---------- Request partial revocation sigs ----------
 def request_revoke_partials(serial: str, node_addresses: List[str], threshold: int) -> List[Tuple[int, bytes]]:
+    """
+    Request partial revocation sigs
+    """
     msg = f"REVOKE:{serial}".encode()
     print("Revoke digest:", hashlib.sha256(msg).hexdigest())
     parts = []
@@ -77,8 +76,6 @@ def request_revoke_partials(serial: str, node_addresses: List[str], threshold: i
             break
     return parts
 
-
-# ---------- Aggregate ----------
 def aggregate_threshold(partials: List[Tuple[int, bytes]]):
     idx = [i for (i, _) in partials]
     print("Indices used for interpolation:", idx)
@@ -90,9 +87,10 @@ def aggregate_threshold(partials: List[Tuple[int, bytes]]):
         agg = scaled if agg is None else add(agg, scaled)
     return agg
 
-
-# ---------- Verify aggregated revoke proof ----------
 def verify_revoke(serial: str, agg_sig_point, master_pk) -> bool:
+    """
+    Verify aggregated revoke proof
+    """
     msg = f"REVOKE:{serial}".encode()
     msg_point = hash_to_G2_point(msg)
     lhs = pairing(agg_sig_point, G1)
@@ -100,8 +98,10 @@ def verify_revoke(serial: str, agg_sig_point, master_pk) -> bool:
     return lhs == rhs
 
 
-# ---------- Broadcast aggregated proof ----------
 def broadcast_revocation(serial: str, agg_sig_point, node_addresses: List[str]):
+    """
+    Broadcast aggregated proof
+    """
     sig_bytes = g2_to_bytes_jac(agg_sig_point)
     for addr in node_addresses: 
         ch = grpc.insecure_channel(addr)
@@ -116,8 +116,10 @@ def broadcast_revocation(serial: str, agg_sig_point, node_addresses: List[str]):
             print(f"{addr} ApplyRevocation failed:", e)
 
 
-# ---------- OCSP Status ----------
 def check_revocation_status(serial: str, node_addresses: List[str], threshold: int):
+    """
+    OCSP Status
+    """
     revoked_count, total = 0, len(node_addresses)   # total = all nodes
     responded = 0
 
@@ -137,13 +139,13 @@ def check_revocation_status(serial: str, node_addresses: List[str], threshold: i
     if revoked_count >= threshold:
         return RevocationStatus.REVOKED, revoked_count, total
     return RevocationStatus.GOOD, revoked_count, total
+    
 
-
-
-
-# ---------- High-level helper ----------
 def perform_revocation(cert_path: str, threshold: int = 2):
-    """Perform threshold revocation of the given cert. Returns (ok, msg)."""
+    """
+    High-level helper
+    Perform threshold revocation of the given cert. Returns (ok, msg).
+    """
     issuer_level, node_addresses, master_pk = detect_issuer_nodes_and_pk(cert_path)
 
     certs = Certificate.from_pem(open(cert_path, "rb").read())
@@ -168,8 +170,6 @@ def perform_revocation(cert_path: str, threshold: int = 2):
     return True, f"Revocation completed, final status: {status_enum.value} ({revoked_count}/{total} nodes)"
 
 
-
-# ---------- Main CLI ----------
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--revoke", help="Path to PEM file of cert to revoke")
@@ -196,3 +196,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
