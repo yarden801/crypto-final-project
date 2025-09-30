@@ -15,7 +15,6 @@ from py_ecc.optimized_bls12_381 import (
     G1, G2, multiply, add, pairing, normalize, FQ
 )
 
-# ---------- Hash helpers ----------
 def H_to_scalar(seed: bytes) -> int:
     return int.from_bytes(hashlib.sha256(seed).digest(), "big") % R
 
@@ -23,8 +22,10 @@ def hash_to_G2_point(msg: bytes):
     h = int.from_bytes(hashlib.sha256(msg).digest(), "big") % R
     return multiply(G2, h)
 
-# ---------- Lagrange interpolation ----------
 def lagrange_coeff(indices: List[int]) -> List[int]:
+    """
+    Lagrange interpolation
+    """
     coeffs = []
     for j, xj in enumerate(indices):
         num, den = 1, 1
@@ -36,8 +37,10 @@ def lagrange_coeff(indices: List[int]) -> List[int]:
         coeffs.append((num * pow(den, -1, R)) % R)
     return coeffs
 
-# ---------- Threshold aggregation ----------
 def aggregate_threshold(partials: List[Tuple[int, bytes]]):
+    """
+    threshold aggreagation function that combines partials to certificate
+    """
     idx = [i for (i, _) in partials]
     lambdas = lagrange_coeff(idx)
     g2_pts = [bytes_to_g2_jac(sig_b) for (_, sig_b) in partials]
@@ -47,7 +50,6 @@ def aggregate_threshold(partials: List[Tuple[int, bytes]]):
         agg = scaled if agg is None else add(agg, scaled)
     return agg
 
-# ---------- Networking ----------
 def request_partials(tbs: bytes, node_addresses: List[str], threshold:int) -> List[Tuple[int,bytes]]:
     print("TBS digest:", hashlib.sha256(tbs).hexdigest())
     parts=[]
@@ -78,7 +80,6 @@ def dump_cert(cert: Certificate):
     print("")
 
 
-# ---------- Main ----------
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--level", type=int, default="1", help="Cert level (1=root, 2=intermediate, 3=leaf, ...)")
