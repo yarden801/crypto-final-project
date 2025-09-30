@@ -12,7 +12,8 @@ from common.util import bytes_to_g1, bytes_to_g2_jac
 from client.revoke import check_revocation_status, RevocationStatus
 
 
-# ---------- Crypto helpers ----------
+# Crypto helpers 
+
 def hash_to_G2_point(msg: bytes):
     h = int.from_bytes(hashlib.sha256(msg).digest(), "big") % G2[0].field_modulus
     return multiply(G2, h)
@@ -69,8 +70,10 @@ def get_nodes_for_issuer(issuer_cn: str):
     return issuer_level, node_addresses, master_pk
 
 
-# ---------- Full validator ----------
 def is_valid_chain(cert_path: str, trust_anchor_pk, threshold: int = 2):
+    """
+    Full validator
+    """
     with open(cert_path, "rb") as f:  
         certs = Certificate.from_pem(f.read())
     certs = certs if isinstance(certs, list) else [certs]
@@ -113,7 +116,6 @@ def is_valid_chain(cert_path: str, trust_anchor_pk, threshold: int = 2):
     return overall_ok, messages, summary
 
 
-# ---------- CLI ----------
 def main():
     ap = argparse.ArgumentParser(description="Validate a certificate chain fully")
     ap.add_argument("cert_path", help="Path to PEM file containing cert + chain")
@@ -127,7 +129,7 @@ def main():
         hexpk = f.read().strip()
     trust_anchor_pk = bytes_to_g1(bytes.fromhex(hexpk))
 
-    # Fast path: only verify signatures
+    # Fast path- only verify signatures
     if args.verify_only:
         with open(args.cert_path, "rb") as f:
             certs = Certificate.from_pem(f.read())
@@ -145,3 +147,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
