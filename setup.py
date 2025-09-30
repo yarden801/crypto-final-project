@@ -3,7 +3,6 @@ import os, json, hashlib, random, sys, argparse
 from py_ecc.optimized_bls12_381 import G1, multiply, curve_order as R, normalize
 from generate_compose import generate_compose   # <--- import generator
 
-# ---------- Utilities ----------
 L = 48
 
 def H_to_scalar(seed: bytes) -> int:
@@ -26,7 +25,6 @@ def shamir_split(secret, n, t):
         shares.append((i, accum))
     return shares
 
-# ---------- Parameters ----------
 parser = argparse.ArgumentParser(description="Setup configs and docker-compose for distributed CA system")
 parser.add_argument("--num-levels", type=int, default=2, help="Number of levels (default: 2)")
 parser.add_argument("--nodes-per-level", type=int, default=3, help="Nodes per level (default: 3)")
@@ -39,7 +37,6 @@ NUM_LEVELS = args.num_levels
 NODES_PER_LEVEL = args.nodes_per_level
 THRESHOLD = args.threshold
 
-# ---------- Setup ----------
 os.makedirs("node_config", exist_ok=True)
 
 for level in range(1, NUM_LEVELS+1):
@@ -66,9 +63,9 @@ for level in range(1, NUM_LEVELS+1):
 
 print(f"Setup done. Generated {NUM_LEVELS} levels, {NODES_PER_LEVEL} nodes per level.")
 
-# ---------- Generate docker-compose.yml ----------
 compose_content = generate_compose(NUM_LEVELS, NODES_PER_LEVEL, THRESHOLD)
 with open("docker-compose.yml", "w") as f:
     f.write(compose_content + "\n")
 
 print("docker-compose.yml written.")
+
