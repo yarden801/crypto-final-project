@@ -77,7 +77,6 @@ def hash_to_G2_point(msg: bytes):
     return multiply(G2, h)
     
 
-# ---------- Lagrange interpolation ----------
 def lagrange_coeff(indices):
     """Compute Lagrange coefficients for interpolation at x=0."""
     coeffs = []
@@ -90,4 +89,5 @@ def lagrange_coeff(indices):
             den = (den * ((xj - xm) % R)) % R
         coeffs.append((num * pow(den, -1, R)) % R)
     return coeffs
+
 
