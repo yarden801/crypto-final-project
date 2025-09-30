@@ -45,7 +45,7 @@ def generate_compose(num_levels, nodes_per_level, threshold):
     lines.append('  client:')
     lines.append('    build: .')
     lines.append('    container_name: client')
-    lines.append('    command: ["python", "-m", "client.demo"]')
+    lines.append('    command: ["tail", "-f", "/dev/null"]')
     lines.append('    environment:')
     lines.append(f'      - NUM_LEVELS={num_levels}')
     lines.append(f'      - TRUST_ANCHOR=level1_master_pk.hex')    
@@ -98,3 +98,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
