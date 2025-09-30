@@ -65,14 +65,6 @@ def bytes_to_g2_jac(b: bytes):
     z = bytes_to_fq2(b[4*L:6*L])
     return (x, y, z)
 
-#def bytes_to_g1(b: bytes):
-    #if len(b) != 2*L:
-     #   raise ValueError("Expected 96 bytes for G1 point")
-    #x = bytes_to_fq(b[0:L])
-    #y = bytes_to_fq(b[L:2*L])
-    #return (x, y, FQ.one())
-
-    
 def bytes_to_g1(b: bytes):
     if len(b) != 96:
         raise ValueError("Expected 96 bytes for G1 point")
@@ -98,3 +90,4 @@ def lagrange_coeff(indices):
             den = (den * ((xj - xm) % R)) % R
         coeffs.append((num * pow(den, -1, R)) % R)
     return coeffs
+
