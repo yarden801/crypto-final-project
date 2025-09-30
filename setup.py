@@ -1,7 +1,7 @@
 # setup.py
 import os, json, hashlib, random, sys, argparse
 from py_ecc.optimized_bls12_381 import G1, multiply, curve_order as R, normalize
-from generate_compose import generate_compose   # <--- import generator
+from generate_compose import generate_compose   
 
 L = 48
 
@@ -76,3 +76,4 @@ if __name__ == "__main__":
     main(parse_args())
     
     
+
