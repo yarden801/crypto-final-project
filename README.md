@@ -4,32 +4,36 @@
 
 This project implements a distributed Threshold Certificate Authority (TCA) system that enables the issuance of digital certificates in a manner independent of any single entity. It incorporates distributed trust and fault tolerance through threshold cryptographic signatures, specifically using BLS (Boneh-Lynn-Shacham) signatures with Shamir secret sharing.
 
+The system supports two modes of operation:
+
+1. **Flat Mode** – A single distributed CA cluster acts as the trust anchor. All certificates are issued and verified directly against this cluster. This configuration is simpler and suitable for controlled environments or demonstrations.
+
+2. **Hierarchical Mode** – The system can also run as a regular PKI hierarchy, where each layer (Root, Intermediate, Leaf) is implemented as a distributed CA cluster. Every layer enforces threshold signing and revocation, closely mirroring the real-world internet trust model while retaining the benefits of decentralization.
+
 The system is designed for environments requiring robust security where no single point of failure can compromise certificate authority operations. Clients submit certificate signing requests (CSR equivalent) to multiple CA nodes, which collectively generate threshold signatures that require only a quorum (threshold) of nodes to participate, providing fault tolerance against unresponsive or malicious nodes.
 
 Key features:
 - **Threshold BLS Signatures**: Distributed private key using Shamir secret sharing
 - **gRPC-based Communication**: Efficient distributed communication protocol
-- **Fault Tolerance**: Operation with threshold (t=2) out of 3 nodes
-- **Certificate Revocation**: Distributed CRL and OCSP support
+- **Fault Tolerance**: Continues operation with threshold out of n nodes
+- **Threshold Revocation** Certificates can be revoked through distributed consensus and persisted throgh local CRL
+- **Dockerized Deployment** Easy setup and orchestration of multiple CA nodes and levels using Docker and dynamic Compose generation.
 
 ## Components
 
 ### Architecture Overview
 The system consists of four main components:
 1. **CA Nodes**: Distributed certificate authority servers holding partial keys
-2. **Client**: Certificate requester that orchestrates threshold signing
+2. **Client**: Certificate requester that orchestrates threshold signing and verification
 3. **Common Libraries**: Shared cryptographic utilities and certificate handling
 4. **gRPC Protocol**: Defines communication interfaces between components
 
 ### CA Nodes (`sharedca/`)
-A gRPC server implementing the above service for one CA node. 
-Each node holds:
-- its **Shamir share** of the level’s private keythe level’s master public key (G1),
-- simple **in-memory CRL** storage.
-- Key duties:
-On **SignPartial / SignRevokePartial**, hash the input to a curve point and sign with the node’s private share to produce a partial G2 signature.
-On **ApplyRevocation**, verify the submitted aggregated G2 signature against the level’s master public key; if valid, record the serial as revoked.
-Serve **CRL / OCSP** from memory.
+Each CA node (`server.py`) holds a portion of the threshold private key and can generate partial BLS signatures:
+- **Key Generation**: Uses Shamir secret sharing to distribute master private key shares
+- **Partial Signing**: Creates BLS partial signatures on certificate TBS (To-Be-Signed) data
+- **Revocation**: Threashold revocation; Maintains in-memory CRL; revokes are roadcast to all nodes; includes OCSP capability
+- **Configuration**: Node ID, total nodes, threshold via environment variables
 
 ### Client (`client/`)
 The client application (`client.py`) handles certificate issuance workflow:
@@ -64,8 +68,13 @@ gRPC service definitions:
 1. **Clone the repository** (if not already done)
 2. **Setup the system**: run setup.py
  ```bash 
- python setup.py --num-levels 2 --nodes-per-level 3 --threshold 2
+ python setup.py --num-levels 3 --nodes-per-level 3 --threshold 2
  ```
+**Note:** For flat mode, set --num-levels 2.
+  - Level 1 = Root CA (distributed cluster)
+  - Level 2 = Endpoint (leaf certificate)
+    For a hierarchical deployment, use >=2
+    
 This will create docker-compose.yml and node config files. If you already have them from previous runs, skip to 3.
 3.. **Start the distributed CA system**:
    ```bash
@@ -109,7 +118,6 @@ This indicates:
 ## Limitations and Development Notes
 You can read deeper in the Known Issues, Discussion and Future Work section in our document.
 In general this is a **Demo Implementation**: Uses fixed seed for reproducible key generation 
-- **In-Memory CRL**: Revocation list stored locally in each node; not synchronized across nodes
 - **No Persistance**: Certificates and revocation state lost on restart
 - **Basic Fault Tolerance**: No advanced recovery mechanisms for persistent node failures
 
