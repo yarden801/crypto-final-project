@@ -93,7 +93,7 @@ This can also be done automatically in `generate_compose.py` and in `setup.py`.
 You cannot manually (or with generate_compose) increase number of nodes without using `setup.py`, as this will mean that you don't create node config for them. 
 But you can manually delete nodes. If you delete too many nodes, you may never reach threshold.
 
-## Example Usage
+## Example Usage TODO change 
 
 When running, a successful certificate issuance will output:
 
