@@ -70,9 +70,9 @@ gRPC service definitions:
  python setup.py --num-levels 3 --nodes-per-level 3 --threshold 2
  ```
 **Note:** For flat mode, set --num-levels 2.
-  Level 1 = Root CA (distributed cluster)
-  Level 2 = Endpoint (leaf certificate)
-  For a hierarchical deployment, use >=2
+  - Level 1 = Root CA (distributed cluster)
+  - Level 2 = Endpoint (leaf certificate)
+    For a hierarchical deployment, use >=2
   
 This will create docker-compose.yml and node config files. If you already have them from previous runs, skip to 3.
 3.. **Start the distributed CA system**:
