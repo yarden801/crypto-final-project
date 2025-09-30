@@ -109,10 +109,11 @@ This will create docker-compose.yml and node config files. If you already have t
       
    3. **Revoke**
      ```bash
+
      docker exec client python -m client.revoke --revoke certs/Level1CA.pem
      ```
 
-   4. **Stop the system**:
+   5. **Stop the system**:
       ```bash
       docker-compose down
       ```
