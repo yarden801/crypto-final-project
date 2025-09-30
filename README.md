@@ -73,10 +73,12 @@ gRPC service definitions:
 **Note:** For flat mode, set --num-levels 1.
     
 This will create docker-compose.yml and node config files. If you already have them from previous runs, skip to 3.
-3.. **Start the distributed CA system**:
+
+3. **Start the distributed CA system**:
    ```bash
    docker-compose up --build
    ```
+
    This launches the current docker compose file with required number of levels, nodes and threshold.
 
 4. **run commands on client**:
@@ -84,6 +86,7 @@ This will create docker-compose.yml and node config files. If you already have t
    #### Option A – Run a basic demo
    ```bash
    docker exec client python client/demo.py
+   ```
 
    This will:
    1. Create a certificate chain (Root → Intermediate → Endpoint)
@@ -91,30 +94,33 @@ This will create docker-compose.yml and node config files. If you already have t
    3. Revoke the intermediate certificate at level 2
    4. Show that the endpoint becomes invalid after revocation
 
+  
   #### Option B – Run manually
    1. **Create certificate**
       ```bash
       # CA
       docker exec client python -m client.sign --level 1 --cn Level1CA --ca
-   
+      ```
+      
+      
+      ```bash
       # Endpoint / leaf certificate
       docker exec client python -m client.sign --level 2 --cn endpoint
-   
-   2. **Validate certificate**
-     ```
+      ```
 
-     docker exec client python -m client.is_valid certs/level1_Level1CA.pem \
-         --trust-anchor level1_master_pk.hex
+   2. **Validate certificate**
+      ```bash
+      docker exec client python -m client.is_valid certs/level1_Level1CA.pem \
+            --trust-anchor level1_master_pk.hex
       ```
       
    3. **Revoke**
-     ```
-
-     docker exec client python -m client.revoke --revoke certs/Level1CA.pem
-     ```
+      ```bash
+      docker exec client python -m client.revoke --revoke certs/Level1CA.pem
+      ```
 
    4. **Stop the system**:
-      ```
+      ```bash
       docker-compose down
       ```
 
